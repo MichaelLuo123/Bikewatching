@@ -82,16 +82,20 @@ map.on('load', async () => {
             station.totalTraffic = station.arrivals + station.departures;
             return station;
           });
+          const radiusScale = d3
+          .scaleSqrt()
+          .domain([0, d3.max(stations, d => d.totalTraffic)])
+          .range([0, 25]);
         const circles = svg
         .selectAll('circle')
         .data(stations)
         .enter()
         .append('circle')
-        .attr('r', 5)
+        .attr('r', d => radiusScale(d.totalTraffic))
         .attr('fill', 'steelblue')
+        .attr('fill-opacity', 0.6)
         .attr('stroke', 'white')
-        .attr('stroke-width', 1)
-        .attr('opacity', 0.8);
+        .attr('stroke-width', 1);
 
     
         function updatePositions() {
