@@ -95,8 +95,15 @@ map.on('load', async () => {
         .attr('fill', 'steelblue')
         .attr('fill-opacity', 0.6)
         .attr('stroke', 'white')
-        .attr('stroke-width', 1);
-
+        .attr('stroke-width', 1)
+        .each(function (d) {
+            d3.select(this)
+              .append('title')
+              .text(
+                `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`
+              );
+        });
+        
     
         function updatePositions() {
         circles
