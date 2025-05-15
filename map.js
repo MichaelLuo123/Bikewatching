@@ -30,5 +30,19 @@ map.on('load', async () => {
         'line-opacity': 0.6       
       }
     });
+    map.addSource('cambridge_route', {
+        type: 'geojson',
+        data: 'https://raw.githubusercontent.com/cambridgegis/cambridgegis_data/main/Recreation/Bike_Facilities/RECREATION_BikeFacilities.geojson',
+    });
+    map.addLayer({
+        id: 'cambridge-bike-lanes',
+        type: 'line',
+        source: 'cambridge_route',
+        paint: {
+          'line-color': '#0074D9', // Blue for Cambridge
+          'line-width': 4,
+          'line-opacity': 0.6,
+        }
+      });
   });
   
