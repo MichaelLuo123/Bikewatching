@@ -47,11 +47,12 @@ map.on('load', async () => {
     });
     let jsonData;
     try {
-        const jsonurl = INPUT_BLUEBIKES_CSV_URL;
+        const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
 
     // Await JSON fetch
         const jsonData = await d3.json(jsonurl);
-
+        let stations = jsonData.data.stations;
+        console.log('Stations Array:', stations);
         console.log('Loaded JSON Data:', jsonData); // Log to verify structure
     } catch (error) {
         console.error('Error loading JSON:', error); // Handle errors
