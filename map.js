@@ -1,7 +1,7 @@
 import mapboxgl from 'https://cdn.jsdelivr.net/npm/mapbox-gl@2.15.0/+esm';
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
 console.log('Mapbox GL JS Loaded:', mapboxgl);
-
+let timeFilter = -1;
 // Set your Mapbox access token here
 mapboxgl.accessToken = 'pk.eyJ1IjoibWljaGFlbGx1byIsImEiOiJjbWFvdjN5NDgwOW5jMmtvOGM2dmZ0ZDc2In0.nmNhVoEtWCuHBMyQtYcCDw';
 
@@ -21,7 +21,14 @@ function getCoords(station) {
   const { x, y } = map.project(point);
   return { cx: x, cy: y };
 }
+function formatTime(minutes) {
+    const date = new Date(0, 0, 0, 0, minutes); // hour, minute
+    return date.toLocaleString('en-US', { timeStyle: 'short' });
+}
 map.on('load', async () => {
+    const timeSlider = document.getElementById('time-slider');
+    const selectedTime = document.getElementById('time-display');
+    const anyTimeLabel = document.getElementById('any-time');
     map.addSource('boston_route', {
       type: 'geojson',
       data: 'https://bostonopendata-boston.opendata.arcgis.com/datasets/boston::existing-bike-network-2022.geojson',
@@ -51,6 +58,19 @@ map.on('load', async () => {
           'line-opacity': 0.6,
         }
     });
+    function updateTimeDisplay() {
+        timeFilter = Number(timeSlider.value);
+      
+        if (timeFilter === -1) {
+          selectedTime.textContent = '';
+          anyTimeLabel.style.display = 'block';
+        } else {
+          selectedTime.textContent = formatTime(timeFilter);
+          anyTimeLabel.style.display = 'none';
+        }
+      
+        // Later: trigger filtering here
+    }
     let jsonData;
     try {
         const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
@@ -123,5 +143,8 @@ map.on('load', async () => {
     } catch (error) {
         console.error('Error loading JSON:', error); // Handle errors
     }
+   
+    timeSlider.addEventListener('input', updateTimeDisplay);
+    updateTimeDisplay();
   });
   
