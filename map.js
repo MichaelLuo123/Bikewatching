@@ -59,9 +59,9 @@ function filterTripsByTime(trips, timeFilter) {
         });
 }
 map.on('load', async () => {
-    const timeSlider = document.getElementById('#time-slider');
-    const selectedTime = document.getElementById('#time-display');
-    const anyTimeLabel = document.getElementById('#any-time');
+    const timeSlider = document.getElementById('time-slider');
+    const selectedTime = document.getElementById('time-display');
+    const anyTimeLabel = document.getElementById('any-time');
     map.addSource('boston_route', {
       type: 'geojson',
       data: 'https://bostonopendata-boston.opendata.arcgis.com/datasets/boston::existing-bike-network-2022.geojson',
