@@ -86,8 +86,8 @@ map.on('load', async () => {
         type: 'line',
         source: 'cambridge_route',
         paint: {
-          'line-color': '#0074D9', 
-          'line-width': 4,
+          'line-color': '#32D400', 
+          'line-width': 5,
           'line-opacity': 0.6,
         }
     });
