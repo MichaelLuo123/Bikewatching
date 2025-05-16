@@ -22,17 +22,6 @@ body {
     height: 100%;
     pointer-events: none;
   }
-circle {
-  pointer-events: auto;
-  --color-departures: steelblue;
-  --color-arrivals: darkorange;
-  --color: color-mix(
-    in oklch,
-    var(--color-departures) calc(100% * var(--departure-ratio)),
-    var(--color-arrivals)
-  );
-  fill: var(--color);
-}
 header {
     display: flex;
     gap: 1em;
@@ -59,4 +48,37 @@ header {
   
   input[type='range'] {
     width: 200px;
+  }
+  #map circle,
+.legend > div {
+  --color-departures: steelblue;
+  --color-arrivals: darkorange;
+  --color: color-mix(
+    in oklch,
+    var(--color-departures) calc(100% * var(--departure-ratio)),
+    var(--color-arrivals)
+  );
+  pointer-events: auto;
+  fill: var(--color);
+  background-color: var(--color); /* for legend blocks */
+}
+.legend {
+    display: flex;
+    margin-block: 1em;
+    gap: 1px;
+    height: 2em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 0.85em;
+    font-weight: bold;
+  }
+  
+  .legend > div {
+    flex: 1;
+    color: white; /* or black, depending on colors */
+    padding: 0.25em 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
