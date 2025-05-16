@@ -91,20 +91,6 @@ map.on('load', async () => {
           'line-opacity': 0.6,
         }
     });
-    function updateTimeDisplay() {
-        timeFilter = Number(timeSlider.value);
-      
-        if (timeFilter === -1) {
-          selectedTime.textContent = '';
-          anyTimeLabel.style.display = 'block';
-        } else {
-          selectedTime.textContent = formatTime(timeFilter);
-          anyTimeLabel.style.display = 'none';
-          
-        }
-        updateScatterPlot(timeFilter);
-        // Later: trigger filtering here
-    }
     let jsonData;
     try {
         const jsonurl = 'https://dsc106.com/labs/lab07/data/bluebikes-stations.json';
@@ -181,6 +167,20 @@ map.on('load', async () => {
             
             updatePositions();
            
+        }
+        function updateTimeDisplay() {
+            timeFilter = Number(timeSlider.value);
+          
+            if (timeFilter === -1) {
+              selectedTime.textContent = '';
+              anyTimeLabel.style.display = 'block';
+            } else {
+              selectedTime.textContent = formatTime(timeFilter);
+              anyTimeLabel.style.display = 'none';
+              
+            }
+            updateScatterPlot(timeFilter);
+            // Later: trigger filtering here
         }
     
         function updatePositions() {
