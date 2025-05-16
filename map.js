@@ -127,6 +127,10 @@ map.on('load', async () => {
           .scaleSqrt()
           .domain([0, d3.max(stations, d => d.totalTraffic)])
           .range([0, 25]);
+          const stationFlow = d3
+          .scaleQuantize()
+          .domain([0, 1])
+          .range([0, 0.5, 1]);
         const circles = svg
         .selectAll('circle')
         .data(stations,  d => d.short_name)
@@ -137,6 +141,9 @@ map.on('load', async () => {
         .attr('fill-opacity', 0.6)
         .attr('stroke', 'white')
         .attr('stroke-width', 1)
+        .style('--departure-ratio', (d) =>
+            stationFlow(d.departures / d.totalTraffic),
+          )
         .each(function (d) {
             d3.select(this)
               .append('title')
@@ -162,6 +169,9 @@ map.on('load', async () => {
               .attr('fill-opacity', 0.6)
               .attr('stroke', 'white')
               .attr('stroke-width', 1)
+              .style('--departure-ratio', (d) =>
+                stationFlow(d.departures / d.totalTraffic),
+              )
               .append('title')
               .text(d => `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
             
