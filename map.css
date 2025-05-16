@@ -25,3 +25,30 @@ body {
 circle {
   pointer-events: auto;
 }
+header {
+    display: flex;
+    gap: 1em;
+    align-items: baseline;
+    padding: 10px;
+  }
+  
+  label {
+    margin-left: auto;
+    font-size: 0.9em;
+  }
+  
+  #time-display {
+    display: block;
+    margin-top: 0.25em;
+  }
+  
+  #any-time {
+    display: block;
+    color: gray;
+    font-style: italic;
+    margin-top: 0.25em;
+  }
+  
+  input[type='range'] {
+    width: 200px;
+  }
