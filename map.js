@@ -25,6 +25,39 @@ function formatTime(minutes) {
     const date = new Date(0, 0, 0, 0, minutes); // hour, minute
     return date.toLocaleString('en-US', { timeStyle: 'short' });
 }
+function computeStationTraffic(stations, trips) {
+    const departures = d3.rollup(
+      trips,
+      v => v.length,
+      d => d.start_station_id
+    );
+  
+    const arrivals = d3.rollup(
+      trips,
+      v => v.length,
+      d => d.end_station_id
+    );
+  
+    return stations.map((station) => {
+      const id = station.short_name;
+      station.arrivals = arrivals.get(id) ?? 0;
+      station.departures = departures.get(id) ?? 0;
+      station.totalTraffic = station.arrivals + station.departures;
+      return station;
+    });
+}
+function minutesSinceMidnight(date) {
+    return date.getHours() * 60 + date.getMinutes();
+}
+function filterTripsByTime(trips, timeFilter) {
+    return timeFilter === -1
+      ? trips
+      : trips.filter((trip) => {
+          const start = minutesSinceMidnight(trip.started_at);
+          const end = minutesSinceMidnight(trip.ended_at);
+          return Math.abs(start - timeFilter) <= 60 || Math.abs(end - timeFilter) <= 60;
+        });
+}
 map.on('load', async () => {
     const timeSlider = document.getElementById('time-slider');
     const selectedTime = document.getElementById('time-display');
@@ -67,8 +100,9 @@ map.on('load', async () => {
         } else {
           selectedTime.textContent = formatTime(timeFilter);
           anyTimeLabel.style.display = 'none';
+          
         }
-      
+        updateScatterPlot(timeFilter);
         // Later: trigger filtering here
     }
     let jsonData;
@@ -78,9 +112,16 @@ map.on('load', async () => {
     // Await JSON fetch
         const jsonData = await d3.json(jsonurl);
         const trafficUrl = 'https://dsc106.com/labs/lab07/data/bluebikes-traffic-2024-03.csv';
-        const trips = await d3.csv(trafficUrl);
+        const trips = await d3.csv(
+            'https://dsc106.com/labs/lab07/data/bluebikes-traffic-2024-03.csv',
+            (trip) => {
+              trip.started_at = new Date(trip.started_at);
+              trip.ended_at = new Date(trip.ended_at);
+              return trip;
+            }
+        );
         console.log('Loaded Trips:', trips.length); 
-        let stations = jsonData.data.stations;
+        let stations = computeStationTraffic(jsonData.data.stations, trips);
         console.log('Stations Array:', stations);
         console.log('Loaded JSON Data:', jsonData); // Log to verify structure
         const departures = d3.rollup(
@@ -108,7 +149,7 @@ map.on('load', async () => {
           .range([0, 25]);
         const circles = svg
         .selectAll('circle')
-        .data(stations)
+        .data(stations,  d => d.short_name)
         .enter()
         .append('circle')
         .attr('r', d => radiusScale(d.totalTraffic))
@@ -123,7 +164,30 @@ map.on('load', async () => {
                 `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`
               );
         });
-        
+        function updateScatterPlot(timeFilter) {
+            const filteredTrips = filterTripsByTime(trips, timeFilter);
+            const filteredStations = computeStationTraffic(stations, filteredTrips);
+          
+            // Adjust size scale depending on whether filter is active
+            timeFilter === -1
+              ? radiusScale.range([0, 25])
+              : radiusScale.range([3, 50]);
+          
+            // Update circle sizes and tooltips
+            svg.selectAll('circle')
+              .data(filteredStations, d => d.short_name) // key function
+              .join('circle')
+              .attr('r', d => radiusScale(d.totalTraffic))
+              .attr('fill', 'steelblue')
+              .attr('fill-opacity', 0.6)
+              .attr('stroke', 'white')
+              .attr('stroke-width', 1)
+              .append('title')
+              .text(d => `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
+            
+            updatePositions();
+           
+        }
     
         function updatePositions() {
         circles
