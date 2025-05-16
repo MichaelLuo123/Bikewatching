@@ -64,6 +64,7 @@ header {
 }
 .legend {
     display: flex;
+    width: 400px;
     margin-block: 1em;
     gap: 1px;
     height: 2em;
