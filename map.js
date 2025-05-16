@@ -121,8 +121,7 @@ map.on('load', async () => {
             }
         );
         console.log('Loaded Trips:', trips.length); 
-        let stations = computeStationTraffic(jsonData.data.stations, trips);
-        console.log('Stations Array:', stations);
+       
         console.log('Loaded JSON Data:', jsonData); // Log to verify structure
         const departures = d3.rollup(
             trips,
@@ -135,14 +134,9 @@ map.on('load', async () => {
             v => v.length,
             d => d.end_station_id
           );
-          
-          stations = stations.map((station) => {
-            let id = station.short_name;
-            station.arrivals = arrivals.get(id) ?? 0;
-            station.departures = departures.get(id) ?? 0;
-            station.totalTraffic = station.arrivals + station.departures;
-            return station;
-          });
+        
+        const stations = computeStationTraffic(jsonData.data.stations, trips);
+        console.log('Stations Array:', stations);
           const radiusScale = d3
           .scaleSqrt()
           .domain([0, d3.max(stations, d => d.totalTraffic)])
